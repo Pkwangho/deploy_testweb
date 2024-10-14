@@ -26,7 +26,7 @@
         width: 120px;
         border: 1px solid #ccc;
         padding: 10px 15px;
-        font-style: initial; 
+        font-style: initial;
         font-size: 18px;
         text-align: center;
     }
@@ -38,74 +38,129 @@
         border: 2px solid #ccc;
         border-radius: 15px;
         background-size: contain;
-        /* 변경 */
         background-repeat: no-repeat;
-        /* 반복 방지 */
         background-position: center;
         position: relative;
     }
 
     #menuName {
         position: absolute;
-        /* 위치를 절대적으로 설정 */
         bottom: 60px;
-        /* 이름과 가격 간격 조정 */
         left: 50%;
-        /* 중앙 정렬 */
         transform: translateX(-50%);
-        /* 중앙 정렬을 위한 변환 */
         background: rgba(255, 255, 255, 0.7);
-        /* 배경 반투명 */
         padding: 10px;
         border-radius: 5px;
         font-size: 24px;
         text-align: center;
-        /* 글자 크기 조정 */
     }
 
     #menuPrice {
         position: absolute;
         bottom: 20px;
-        /* 가격 위치 */
         left: 50%;
         transform: translateX(-50%);
         background: rgba(255, 255, 255, 0.7);
         padding: 10px;
         border-radius: 5px;
         font-size: 20px;
-        /* 가격 글자 크기 조정 */
         text-align: center;
     }
 
-    p {
-        width: 80%;
-        padding: 10px;
-        line-height: 2em;
+    button {
+        display: grid;
+        place-items: center;
+        width: 90px;
+        height: 30px;
+        background: #222;
+        color: #fff;
+        border: 1px solid white;
+    }
+
+    input {
+        width: 200px;
+        padding: 5px;
+        margin-right: 10px;
     }
 </style>
 
 <body>
-    <ul>
+    <ul id="menuList">
         <li><a href="#" onclick="changeBg('cold.jpg','밀면','9000원' )">메뉴1</a></li>
         <li><a href="#" onclick="changeBg('fish.jpg', '고등어구이솥밥정식','15000원')">메뉴2</a></li>
         <li><a href="#" onclick="changeBg('soup.jpg','돼지국밥','9000원')">메뉴3</a></li>
     </ul>
+    
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+        <input type="text" id="newMenuName" placeholder="메뉴 이름">
+        <input type="text" id="newMenuPrice" placeholder="가격">
+        <button onclick="addMenu()">등록</button>
+    </div>
+    
     <div id="result">
         <div id="menuName"></div>
         <div id="menuPrice"></div>
     </div>
-
-
+    
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+        <button onclick="randomMenu()">선택</button>
+    </div>
 
     <script>
+        const menus = [
+            { img: 'cold.jpg', name: '밀면', price: '9000원' },
+            { img: 'fish.jpg', name: '고등어구이솥밥정식', price: '15000원' },
+            { img: 'soup.jpg', name: '돼지국밥', price: '9000원' }
+        ];
+
+        function addMenu() {
+            const nameInput = document.getElementById('newMenuName');
+            const priceInput = document.getElementById('newMenuPrice');
+            const newName = nameInput.value;
+            const newPrice = priceInput.value;
+
+            if (newName && newPrice) {
+                const newMenu = { img: 'default.jpg', name: newName, price: newPrice }; // 기본 이미지를 설정
+                menus.push(newMenu);
+                updateMenuList();
+                nameInput.value = '';
+                priceInput.value = '';
+            } else {
+                alert('메뉴 이름과 가격을 입력해주세요.');
+            }
+        }
+
+        function updateMenuList() {
+            const menuList = document.getElementById('menuList');
+            menuList.innerHTML = ''; // 기존 목록 초기화
+            menus.forEach((menu, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#" onclick="changeBg('${menu.img}', '${menu.name}', '${menu.price}')">${menu.name}</a>
+                                <button onclick="deleteMenu(${index})">삭제</button>`;
+                menuList.appendChild(li);
+            });
+        }
+
+        function deleteMenu(index) {
+            menus.splice(index, 1); // 해당 인덱스의 메뉴 삭제
+            updateMenuList(); // 목록 업데이트
+        }
+
+        function randomMenu() {
+            const randomIndex = Math.floor(Math.random() * menus.length);
+            const selectedMenu = menus[randomIndex];
+            changeBg(selectedMenu.img, selectedMenu.name, selectedMenu.price);
+        }
+
         function changeBg(img, name, price) {
             var result = document.querySelector('#result');
             result.style.backgroundImage = `url('${img}')`;
-            menuName.textContent = name;
             menuName.textContent = name; // 메뉴 이름 설정
             menuPrice.textContent = price; // 가격 설정
-
         }
+        
+        // 초기 메뉴 목록 업데이트
+        updateMenuList();
     </script>
 </body>
 
